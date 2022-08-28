@@ -1,16 +1,14 @@
 from moviepy.editor import *
 import numpy as np
 
-import os
-import sys
-import random
-import re
+import os, random, re
 
 
 class GenerationParams:
     chances = {
         "reverse_whole_video": 1,
         "reverse_part_of_the_video": 1,
+
         "lag": 1,
     }
 
@@ -40,20 +38,38 @@ class VideoRandomizer:
     gathered_videos: list[VideoFileClip] = []
     edited_clips = []
 
-    paths_to_gather_from: list[str] = [os.path.curdir + r"\vidsToTestWith"]
+    check_paths_to_gather_from: list[str] = [os.path.curdir + r"\vidsToTestWith"]
+    paths_to_gather_from: list[str] = []
     compatible_formats: list[str] = ["mp4", "avi", "mov", "webm", "3gp"]
     amount_of_videos_to_get: int = 10
 
     output_settings = OutputSettings()
     generation_params = GenerationParams()
 
+
     def __init__(self):
+        self.checksStuff()
+
         for path in self.paths_to_gather_from:
             self.getVideos(path)
 
         print(self.gathered_videos)
 
         self.glueVideos()
+
+
+    def checksStuff(self):
+        for path in self.check_paths_to_gather_from:
+            if os.path.exists(path):
+                self.paths_to_gather_from.append(path)
+
+        assert len(self.paths_to_gather_from) != 0, "No valid paths to get videos from were specified!"
+
+        try:
+            os.mkdir(self.output_settings.path_output)
+        except OSError as error:
+            print(error)
+
 
 
     def getVideos(self, path: str):
@@ -73,12 +89,6 @@ class VideoRandomizer:
 
 
     def glueVideos(self):
-        final_clip = None
-
-        # final_clip = clips_array(
-        #     [[self.videos[0], self.videos[1]],[self.videos[2], self.videos[0]]]
-        # )
-
         final_clip = concatenate_videoclips(self.edited_clips, method ="compose") # this doesn't break vids
 
         final_clip.write_videofile(self.output_settings.path_output+"\\"+self.output_settings.output_name+self.output_settings.output_format)
@@ -122,6 +132,7 @@ class VideoRandomizer:
             for i in range(lag_segments):
                 self.edited_clips.append(lag_clip)
 
+        # put it here to prevent dublications and end with the rest of the video
         self.edited_clips.append(last_clip)
 
 
