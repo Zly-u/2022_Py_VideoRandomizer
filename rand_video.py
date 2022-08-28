@@ -1,7 +1,5 @@
 from moviepy.editor import *
-from moviepy.video.fx.all import *
 import random
-from datetime import datetime
 from os import path, listdir
 import os
 import numpy as np
@@ -40,7 +38,7 @@ if(len(sys.argv) > 1):
         for i in range(1, len(sys.argv)):
             if(sys.argv[i] in config):                
                 config[sys.argv[i]] = sys.argv[i+1]                
-    except e as Exception:
+    except Exception as e:
         print(f'Wrong command line arguments\n{e}')
 
 # reading config into variables
