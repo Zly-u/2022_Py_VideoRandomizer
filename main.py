@@ -16,7 +16,9 @@ class GenerationParams:
 
     amount_of_random_parts_per_video = {
         "reverses": [1, 3],
-        "lags": [3, 4]
+
+        "lags": [3, 4],
+        "lag_segments": [10, 30],
     }
 
     lengths = {
@@ -97,25 +99,29 @@ class VideoRandomizer:
         lags_range = self.generation_params.amount_of_random_parts_per_video["lags"]
         lags = random.randrange(lags_range[0], lags_range[1])
 
-        lag_len_range = self.generation_params.lengths["lag_lengths_in_frames"]
-        lag_len = random.randrange(lag_len_range[0], lag_len_range[1])
-        frame_time = 1.0/video.fps
-        lag_part_len = frame_time*lag_len
-
-        lag_pos_start = random.uniform(0, video.duration * 0.9)
-
-        if lag_pos_start+lag_part_len > video.duration:
-            lag_part_len = abs(video.duration-lag_pos_start)
-
         last_clip = video
-        # for lag in range(lags):
-        first_clip  = last_clip.subclip(0, lag_pos_start)
-        lag_clip    = last_clip.subclip(lag_pos_start, lag_pos_start + lag_part_len)
-        last_clip   = last_clip.subclip(lag_pos_start + lag_part_len, video.duration)
+        for lag in range(lags):
+            lag_segments_range = self.generation_params.amount_of_random_parts_per_video["lag_segments"]
+            lag_segments = random.randrange(lag_segments_range[0], lag_segments_range[1])
 
-        self.edited_clips.append(first_clip)
-        for i in range(lags):
-            self.edited_clips.append(lag_clip)
+            lag_len_range = self.generation_params.lengths["lag_lengths_in_frames"]
+            lag_len = random.randrange(lag_len_range[0], lag_len_range[1])
+            frame_time = 1.0/last_clip.fps
+            lag_part_len = frame_time*lag_len
+
+            lag_pos_start = random.uniform(0, last_clip.duration * 0.9)
+
+            if lag_pos_start+lag_part_len > last_clip.duration:
+                lag_part_len = abs(last_clip.duration-lag_pos_start)
+
+            first_clip  = last_clip.subclip(0, lag_pos_start)
+            lag_clip    = last_clip.subclip(lag_pos_start, lag_pos_start + lag_part_len)
+            last_clip   = last_clip.subclip(lag_pos_start + lag_part_len, last_clip.duration)
+
+            self.edited_clips.append(first_clip)
+            for i in range(lag_segments):
+                self.edited_clips.append(lag_clip)
+
         self.edited_clips.append(last_clip)
 
 
