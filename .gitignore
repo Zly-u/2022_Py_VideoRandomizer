@@ -1,0 +1,12 @@
+\venv
+\.idea
+\__pycache__
+
+\vidsToTestWith
+\vidsToTestWith_excluded
+\TestOutput
+
+config.py
+rand_video.py
+run.py
+run.bat
