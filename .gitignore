@@ -6,6 +6,9 @@
 \vidsToTestWith_excluded
 \TestOutput
 
+rand_video.py
+genSettings.py
+
 config.py
 rand_video.py
 run.py

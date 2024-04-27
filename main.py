@@ -89,8 +89,8 @@ class VideoRandomizer:
 
             edited_vid = video
 
-            edited_vid = self.vfx.lagVideo(edited_vid)
-            # edited_vid = self.vfx.reverseWholeVideo(edited_vid)
+            # edited_vid = self.vfx.lagVideo(edited_vid)
+            edited_vid = self.vfx.reverseWholeVideo(edited_vid)
 
             self.edited_clips.append(edited_vid)
 
